@@ -50,9 +50,7 @@ func readResponse(r io.Reader) string {
 	bytes := []byte{}
 	for {
 		n, err := r.Read(buf)
-		for _, b := range buf[:n] {
-			bytes = append(bytes, b)
-		}
+		bytes = append(bytes, buf[:n]...)
 		if err == io.EOF {
 			var out string = string(bytes)
 			return out
