@@ -9,8 +9,11 @@ vet: lint
 	go vet ./...
 .PHONY:vet
 build: vet
-	go build -o verle-go.exe cmd/cli/main.go
+	go build -o verle-go cmd/cli/main.go
 .PHONY:build
+build-win: vet
+	go build -o verle-go.exe cmd/cli/main.go GOOS=windows
+.PHONY:build-win
 run: vet
 	go run cmd/cli/main.go
 .PHONY:run
