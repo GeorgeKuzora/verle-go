@@ -2,8 +2,10 @@ package weeek
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -59,4 +61,13 @@ func readResponse(r io.Reader) string {
 			panic(err)
 		}
 	}
+}
+
+func getDateTasks(data string) DateTasks {
+	var tasks DateTasks
+	err := json.Unmarshal([]byte(data), &tasks)
+	if err != nil {
+		log.Fatalln("Can't Unmarshal weeek data", err)
+	}
+	return tasks
 }
