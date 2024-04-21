@@ -39,16 +39,6 @@ func InitClient() {
 		log.Fatalf("Unable to create Google Sheets service: %v", err)
 	}
 
-	// Handlers and routings
-	http.HandleFunc("/read", ReadData)
-	http.HandleFunc("/create", CreateData)
-	http.HandleFunc("/update", UpdateData)
-	http.HandleFunc("/delete", DeleteData)
-
-	// Start the HTTP server.
-	port := ":8080"
-	fmt.Printf("Server is listening on port %s...\n", port)
-	http.ListenAndServe(port, nil)
 }
 
 func ReadData(w http.ResponseWriter, r *http.Request) {
