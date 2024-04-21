@@ -24,3 +24,5 @@ go.work
 env
 .env
 
+# Secrets
+service-account-key.json
