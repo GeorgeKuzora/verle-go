@@ -1,4 +1,0 @@
-# Requests for httpie cli client
-# Weeek
-# Get all tasks for a day on assembly
-http https://api.weeek.net/public/v1/tm/tasks Authorization:"Bearer 2a01dd48-aae7-4d8e-9576-8a0d7a933d5f" day==21.04.2024 projectId==6
