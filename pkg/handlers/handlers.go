@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"verle_go/pkg/sheets"
+	"verle_go/pkg/weeek"
 )
 
 func RegisterHandlers() {
@@ -10,6 +11,7 @@ func RegisterHandlers() {
 	http.HandleFunc("/create", createData)
 	http.HandleFunc("/update", updateData)
 	http.HandleFunc("/delete", deleteData)
+	http.HandleFunc("/getweeek", getWeeek)
 }
 
 func readData(w http.ResponseWriter, r *http.Request) {
@@ -25,5 +27,9 @@ func updateData(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteData(w http.ResponseWriter, r *http.Request) {
+	sheets.DeleteData(w, r)
+}
+
+func getWeeek(w http.ResponseWriter, r *http.Request) {
 	sheets.DeleteData(w, r)
 }
