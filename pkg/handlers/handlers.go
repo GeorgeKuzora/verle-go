@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"verle_go/pkg/sheets"
 	"verle_go/pkg/weeek"
@@ -31,5 +32,7 @@ func deleteData(w http.ResponseWriter, r *http.Request) {
 }
 
 func getWeeek(w http.ResponseWriter, r *http.Request) {
-	sheets.DeleteData(w, r)
+	tasks := weeek.GetWeekDayTasks()
+	obj := weeek.UnmarshalDateTasks(tasks)
+	fmt.Println(obj)
 }

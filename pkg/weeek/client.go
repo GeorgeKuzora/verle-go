@@ -12,11 +12,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func InitClient() {
+func GetWeekDayTasks() string {
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 	}
-	link := "https://api.weeek.net/public/v1/tm/tasks?day=31.03.2024&projectId=6&all=1"
+	link := "https://api.weeek.net/public/v1/tm/tasks?day=13.05.2024&projectId=6&all=1"
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, link, nil)
 	if err != nil {
 		panic(err)
@@ -33,7 +33,7 @@ func InitClient() {
 		panic(fmt.Sprintf("unexpected status: got %v", res.Status))
 	}
 	fmt.Println(res.Header.Get("Content-Type"))
-	fmt.Println(readResponse(res.Body))
+	return readResponse(res.Body)
 }
 
 func getWeeekToken() string {
@@ -63,7 +63,7 @@ func readResponse(r io.Reader) string {
 	}
 }
 
-func getDateTasks(data string) DateTasks {
+func UnmarshalDateTasks(data string) DateTasks {
 	var tasks DateTasks
 	err := json.Unmarshal([]byte(data), &tasks)
 	if err != nil {
