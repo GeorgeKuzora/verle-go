@@ -34,5 +34,5 @@ func deleteData(w http.ResponseWriter, r *http.Request) {
 func getWeeek(w http.ResponseWriter, r *http.Request) {
 	tasks := weeek.GetWeekDayTasks()
 	obj := weeek.UnmarshalDateTasks(tasks)
-	fmt.Println(obj)
+	fmt.Printf("%+v\n", obj)
 }
