@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -150,4 +151,28 @@ func DeleteData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks) {
+	// Parse request body to get data to be added.
+	type RequestData struct {
+		Date time.Time `json:"date"`
+	}
+
+	var requestData RequestData
+
+	err := json.NewDecoder(r.Body).Decode(&requestData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	values := sheets.ValueRange{Values: requestData.Values}
+	_, err = sheetsService.Spreadsheets.Values.Append(spreadsheetID, readRange, &values).ValueInputOption("RAW").Do()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
