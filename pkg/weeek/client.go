@@ -12,11 +12,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func GetWeekDayTasks() string {
+func GetWeekDayTasks(day string) string {
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 	}
-	link := "https://api.weeek.net/public/v1/tm/tasks?day=13.05.2024&projectId=6&all=1"
+	link := "https://api.weeek.net/public/v1/tm/tasks?day=" + day + "&projectId=6&all=1"
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, link, nil)
 	if err != nil {
 		panic(err)
