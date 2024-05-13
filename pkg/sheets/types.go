@@ -1,6 +1,8 @@
 package sheets
 
-import "time"
+import (
+	"time"
+)
 
 // DateTasks represents all tasks for a given date.
 type DateTasks struct {
@@ -16,3 +18,9 @@ type Task struct {
 }
 
 type Date time.Time
+
+func (d Date) toString() string {
+	t := time.Time(d)
+	s := t.Format("02.01.2006")
+	return s
+}
