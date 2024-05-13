@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -16,7 +15,7 @@ import (
 
 const (
 	spreadsheetID = "1zbh7UWV9NglhkgjHx5-7WnxALfvmRTIgHZhQBdkJhYE"
-	readRange     = "Sheet1!A:C"
+	readRange     = "Sheet1!A:D"
 	credentials   = "service-account-key.json"
 )
 
@@ -154,21 +153,19 @@ func DeleteData(w http.ResponseWriter, r *http.Request) {
 }
 
 func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks) {
-	// Parse request body to get data to be added.
-	type RequestData struct {
-		Date time.Time `json:"date"`
+	var taskTable = [][]string{}
+
+	for _, v := range tasks.Tasks {
+		task := make([]string, 0, 4)
+		task = append(task, string(v.Id))
+		task = append(task, v.Title)
+		task = append(task, v.Desc)
+		task = append(task, string(v.Date.toString()))
+		taskTable = append(taskTable, task)
 	}
 
-	var requestData RequestData
-
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	values := sheets.ValueRange{Values: requestData.Values}
-	_, err = sheetsService.Spreadsheets.Values.Append(spreadsheetID, readRange, &values).ValueInputOption("RAW").Do()
+	values := sheets.ValueRange{Values: taskTable}
+	_, err := sheetsService.Spreadsheets.Values.Append(spreadsheetID, readRange, &values).ValueInputOption("RAW").Do()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
