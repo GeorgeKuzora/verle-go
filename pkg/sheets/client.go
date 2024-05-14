@@ -153,18 +153,24 @@ func DeleteData(w http.ResponseWriter, r *http.Request) {
 }
 
 func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks) {
-	var taskTable = [][]string{}
+
+	type TasksData struct {
+		Values [][]interface{} `json:"data"`
+	}
+
+	var tasksData TasksData
 
 	for _, v := range tasks.Tasks {
-		task := make([]string, 0, 4)
-		task = append(task, string(v.Id))
+
+		var task []interface{}
+		task = append(task, fmt.Sprint(v.Id))
 		task = append(task, v.Title)
 		task = append(task, v.Desc)
 		task = append(task, string(v.Date.toString()))
-		taskTable = append(taskTable, task)
+		tasksData.Values = append(tasksData.Values, task)
 	}
 
-	values := sheets.ValueRange{Values: taskTable}
+	values := sheets.ValueRange{Values: tasksData.Values}
 	_, err := sheetsService.Spreadsheets.Values.Append(spreadsheetID, readRange, &values).ValueInputOption("RAW").Do()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
