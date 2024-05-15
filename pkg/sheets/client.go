@@ -165,7 +165,11 @@ func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks) {
 		var task []interface{}
 		task = append(task, fmt.Sprint(v.Id))
 		task = append(task, v.Title)
-		task = append(task, v.Desc)
+		if v.Desc == "" {
+			task = append(task, "no_description")
+		} else {
+			task = append(task, v.Desc)
+		}
 		task = append(task, string(v.Date.toString()))
 		tasksData.Values = append(tasksData.Values, task)
 	}
