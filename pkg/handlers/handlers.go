@@ -42,7 +42,7 @@ func getDayTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func postDayTasks(w http.ResponseWriter, r *http.Request) {
-	t := weeek.GetWeekDayTasks("13.05.2024")
+	t := weeek.GetWeekDayTasks("16.05.2024")
 	dayTasks := weeek.UnmarshalDateTasks(t)
 	// convert to sheets tasks
 	sheetsTasks := converter.ConvertWeeekSheets(dayTasks)
