@@ -43,7 +43,6 @@ func getWeeekToken() string {
 	}
 	token := m["WEEEK_API_TOKEN"]
 	token = "Bearer " + token
-	fmt.Printf("got weeek token: %s\n", token)
 	return token
 }
 
