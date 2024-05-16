@@ -9,6 +9,10 @@ import (
 	"verle_go/pkg/weeek"
 )
 
+func InitClients() {
+	sheets.InitClient()
+}
+
 func RegisterHandlers() {
 	http.HandleFunc("/read", readData)
 	http.HandleFunc("/create", createData)
