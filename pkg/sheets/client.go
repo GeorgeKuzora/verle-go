@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"verle_go/pkg/config"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -152,7 +153,7 @@ func DeleteData(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks) {
+func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks, workplace config.Workplace) {
 
 	type TasksData struct {
 		Values [][]interface{} `json:"data"`
@@ -175,7 +176,7 @@ func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks) {
 	}
 
 	values := sheets.ValueRange{Values: tasksData.Values}
-	_, err := sheetsService.Spreadsheets.Values.Append(spreadsheetID, readRange, &values).ValueInputOption("RAW").Do()
+	_, err := sheetsService.Spreadsheets.Values.Append(workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range, &values).ValueInputOption("RAW").Do()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

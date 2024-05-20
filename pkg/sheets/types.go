@@ -12,7 +12,7 @@ type DateTasks struct {
 // Task represents a weeek task card.
 type Task struct {
 	Id    int    `json:"id"`
-	Title string `json:"title"` 
+	Title string `json:"title"`
 	Desc  string `json:"description"`
 	Date  Date   `json:"date"`
 }
