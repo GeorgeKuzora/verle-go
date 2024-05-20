@@ -14,8 +14,67 @@ var WeeekProjects = map[WeeekProjectTypes]int{
 	Assembly: 6,
 }
 
-	Sheets: Sheets{
-		SpreadsheetID: 
-	}
 var Imf120Workplace = Workplace{
+	SheetsTable: Sheets{
+		SpreadsheetID: spreadsheetID,
+		Range:         "IMF!A:D",
+		Credentials:   credentials,
+	},
+
+	WeeekProject: Weeek{
+		Project:       IMF120,
+		ProjectNumber: WeeekProjects[IMF120],
+	},
+}
+
+var TrobartWorkplace = Workplace{
+	SheetsTable: Sheets{
+		SpreadsheetID: spreadsheetID,
+		Range:         "TROBART!A:D",
+		Credentials:   credentials,
+	},
+
+	WeeekProject: Weeek{
+		Project:       Trobart,
+		ProjectNumber: WeeekProjects[Trobart],
+	},
+}
+
+var DripWorkplace = Workplace{
+	SheetsTable: Sheets{
+		SpreadsheetID: spreadsheetID,
+		Range:         "DRIP!A:D",
+		Credentials:   credentials,
+	},
+
+	WeeekProject: Weeek{
+		Project:       Drip,
+		ProjectNumber: WeeekProjects[Drip],
+	},
+}
+
+var CapsuleWorkplace = Workplace{
+	SheetsTable: Sheets{
+		SpreadsheetID: spreadsheetID,
+		Range:         "CAPSULE!A:D",
+		Credentials:   credentials,
+	},
+
+	WeeekProject: Weeek{
+		Project:       Capsule,
+		ProjectNumber: WeeekProjects[Capsule],
+	},
+}
+
+var AssemblyWorkplace = Workplace{
+	SheetsTable: Sheets{
+		SpreadsheetID: spreadsheetID,
+		Range:         "ASSEMBLY!A:D",
+		Credentials:   credentials,
+	},
+
+	WeeekProject: Weeek{
+		Project:       Assembly,
+		ProjectNumber: WeeekProjects[Assembly],
+	},
 }
