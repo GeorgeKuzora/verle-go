@@ -5,8 +5,7 @@ const (
 	credentials   = "service-account-key.json"
 )
 
-
-WeeekProjects := map[WeeekProjectTypes]int{
+var WeeekProjects = map[WeeekProjectTypes]int{
 	Unknown:  0,
 	IMF120:   2,
 	Trobart:  14,
@@ -15,8 +14,8 @@ WeeekProjects := map[WeeekProjectTypes]int{
 	Assembly: 6,
 }
 
-Imf120Workplace := Workplace{
 	Sheets: Sheets{
 		SpreadsheetID: 
 	}
+var Imf120Workplace = Workplace{
 }
