@@ -17,11 +17,12 @@ func RegisterHandlers() {
 }
 
 func postDayTasks(w http.ResponseWriter, r *http.Request) {
-
-	t := weeek.GetWeekDayTasks("16.05.2024", config.AssemblyWorkplace)
-	dayTasks := weeek.UnmarshalDateTasks(t)
-	// convert to sheets tasks
-	sheetsTasks := converter.ConvertWeeekSheets(dayTasks)
-	// write converted sheets tasks to sheets
-	sheets.WriteTasksToSheets(w, sheetsTasks)
+	for _, wp := range config.Workplaces {
+		t := weeek.GetWeekDayTasks("16.05.2024", wp)
+		dayTasks := weeek.UnmarshalDateTasks(t)
+		// convert to sheets tasks
+		sheetsTasks := converter.ConvertWeeekSheets(dayTasks)
+		// write converted sheets tasks to sheets
+		sheets.WriteTasksToSheets(w, sheetsTasks, wp)
+	}
 }
