@@ -18,7 +18,6 @@ var Imf120Workplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "IMF!A:D",
-		Credentials:   credentials,
 	},
 
 	WeeekProject: Weeek{
@@ -31,7 +30,6 @@ var TrobartWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "TROBART!A:D",
-		Credentials:   credentials,
 	},
 
 	WeeekProject: Weeek{
@@ -43,8 +41,7 @@ var TrobartWorkplace = Workplace{
 var DripWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
-		Range:         "DRIP!A:D",
-		Credentials:   credentials,
+		Range:         "DRIPS!A:D",
 	},
 
 	WeeekProject: Weeek{
@@ -56,8 +53,7 @@ var DripWorkplace = Workplace{
 var CapsuleWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
-		Range:         "CAPSULE!A:D",
-		Credentials:   credentials,
+		Range:         "CAPSULES!A:D",
 	},
 
 	WeeekProject: Weeek{
@@ -70,11 +66,18 @@ var AssemblyWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "ASSEMBLY!A:D",
-		Credentials:   credentials,
 	},
 
 	WeeekProject: Weeek{
 		Project:       Assembly,
 		ProjectNumber: WeeekProjects[Assembly],
 	},
+}
+
+var Workplaces = []Workplace{
+	Imf120Workplace,
+	TrobartWorkplace,
+	CapsuleWorkplace,
+	DripWorkplace,
+	AssemblyWorkplace,
 }

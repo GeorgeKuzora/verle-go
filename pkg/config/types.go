@@ -8,7 +8,6 @@ type Workplace struct {
 type Sheets struct {
 	SpreadsheetID string
 	Range         string
-	Credentials   string
 }
 
 type Weeek struct {
