@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"time"
+	"verle_go/pkg/config"
 	"verle_go/pkg/converter"
 	"verle_go/pkg/sheets"
 	"verle_go/pkg/weeek"
@@ -18,7 +17,8 @@ func RegisterHandlers() {
 }
 
 func postDayTasks(w http.ResponseWriter, r *http.Request) {
-	t := weeek.GetWeekDayTasks("16.05.2024")
+
+	t := weeek.GetWeekDayTasks("16.05.2024", config.AssemblyWorkplace)
 	dayTasks := weeek.UnmarshalDateTasks(t)
 	// convert to sheets tasks
 	sheetsTasks := converter.ConvertWeeekSheets(dayTasks)
