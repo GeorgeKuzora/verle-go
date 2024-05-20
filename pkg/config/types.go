@@ -1,19 +1,19 @@
 package config
 
 type Workplace struct {
-	Sheets Sheets
-	Weeek  Weeek
+	SheetsTable  Sheets
+	WeeekProject Weeek
 }
 
 type Sheets struct {
 	SpreadsheetID string
-	ReadRange     string
+	Range         string
 	Credentials   string
 }
 
 type Weeek struct {
-	BaseUsl string
-	project WeeekProjectTypes
+	Project       WeeekProjectTypes
+	ProjectNumber int
 }
 
 type WeeekProjectTypes int
