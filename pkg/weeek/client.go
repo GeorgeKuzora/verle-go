@@ -17,7 +17,7 @@ func GetWeekDayTasks(day string, workplace config.Workplace) string {
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 	}
-	link := "https://api.weeek.net/public/v1/tm/tasks?day=" + day + "&projectId=" + fmt.Sprint(workplace.WeeekProject.ProjectNumber) + "&all=1"
+	link := "https://api.weeek.net/public/v1/tm/tasks?day=" + day + "&projectId=" + fmt.Sprint(workplace.WeeekProject.ProjectNumber) + "&all=0"
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, link, nil)
 	if err != nil {
 		panic(err)
