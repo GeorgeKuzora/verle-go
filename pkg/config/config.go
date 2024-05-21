@@ -18,6 +18,8 @@ var Imf120Workplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "IMF!A:D",
+		UpdateRange:   "IMF!A1:D200",
+		SheetID:       1330258137,
 	},
 
 	WeeekProject: Weeek{
@@ -30,6 +32,8 @@ var TrobartWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "TROBART!A:D",
+		UpdateRange:   "TROBART!A1:D200",
+		SheetID:       1738797376,
 	},
 
 	WeeekProject: Weeek{
@@ -42,6 +46,8 @@ var DripWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "DRIPS!A:D",
+		UpdateRange:   "DRIPS!A1:D200",
+		SheetID:       612152640,
 	},
 
 	WeeekProject: Weeek{
@@ -54,6 +60,8 @@ var CapsuleWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "CAPSULES!A:D",
+		UpdateRange:   "CAPSULES!A1:D200",
+		SheetID:       1199560039,
 	},
 
 	WeeekProject: Weeek{
@@ -66,6 +74,8 @@ var AssemblyWorkplace = Workplace{
 	SheetsTable: Sheets{
 		SpreadsheetID: spreadsheetID,
 		Range:         "ASSEMBLY!A:D",
+		UpdateRange:   "ASSEMBLY!A1:D200",
+		SheetID:       1355663488,
 	},
 
 	WeeekProject: Weeek{

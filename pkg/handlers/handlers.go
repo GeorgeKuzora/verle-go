@@ -18,17 +18,18 @@ func RegisterHandlers() {
 }
 
 func postDayTasks(w http.ResponseWriter, r *http.Request) {
-	currentYear, currentMonth, currentDate := time.Now().Date()
-	current := time.Date(currentYear, currentMonth, currentDate, 1, 1, 1, 1, time.Local)
-	for i := 0; i <= 7; i++ {
-		for _, wp := range config.Workplaces {
+	for _, wp := range config.Workplaces {
+		currentYear, currentMonth, currentDate := time.Now().Date()
+		current := time.Date(currentYear, currentMonth, currentDate, 1, 1, 1, 1, time.Local)
+		sheets.UpdateTasksData(w, r, wp)
+		for i := 0; i <= 7; i++ {
 			t := weeek.GetWeekDayTasks(current.Format("02.01.2006"), wp)
 			dayTasks := weeek.UnmarshalDateTasks(t)
 			// convert to sheets tasks
 			sheetsTasks := converter.ConvertWeeekSheets(dayTasks)
 			// write converted sheets tasks to sheets
 			sheets.WriteTasksToSheets(w, sheetsTasks, wp)
+			current = current.AddDate(0, 0, 1)
 		}
-		current = current.AddDate(0, 0, 1)
 	}
 }

@@ -8,6 +8,8 @@ type Workplace struct {
 type Sheets struct {
 	SpreadsheetID string
 	Range         string
+	UpdateRange   string
+	SheetID       int
 }
 
 type Weeek struct {

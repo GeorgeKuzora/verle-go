@@ -184,3 +184,57 @@ func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks, workplace config
 
 	w.WriteHeader(http.StatusCreated)
 }
+func DeleteTasksData(w http.ResponseWriter, r *http.Request, workplace config.Workplace) {
+	// Delete data from the Google Sheet using the Google Sheets API.
+	var requests []*sheets.Request
+
+	// Define a clear request for each row to be deleted.
+	requests = append(requests, &sheets.Request{
+		DeleteDimension: &sheets.DeleteDimensionRequest{
+			Range: &sheets.DimensionRange{
+				SheetId:    int64(workplace.SheetsTable.SheetID),
+				Dimension:  "ROWS",
+				StartIndex: int64(0), // Google Sheets indexes start from 0.
+				EndIndex:   int64(200),
+			},
+		},
+	})
+
+	// Execute the batch update to delete rows.
+	batchUpdateRequest := &sheets.BatchUpdateSpreadsheetRequest{Requests: requests}
+	_, err := sheetsService.Spreadsheets.BatchUpdate(workplace.SheetsTable.SpreadsheetID, batchUpdateRequest).Context(r.Context()).Do()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func UpdateTasksData(w http.ResponseWriter, r *http.Request, wp config.Workplace) {
+
+	var updateData [][]interface{}
+	var emptyData []interface{}
+
+	for i := 0; i < 4; i++ {
+		emptyData = append(emptyData, "")
+	}
+	for i := 0; i < 200; i++ {
+		updateData = append(updateData, emptyData)
+	}
+	// Update data in the Google Sheets using the Google Sheets API.
+	values := sheets.ValueRange{Values: updateData}
+
+	_, err := sheetsService.Spreadsheets.Values.Update(wp.SheetsTable.SpreadsheetID, wp.SheetsTable.UpdateRange, &values).
+		ValueInputOption("RAW").
+		Context(r.Context()).
+		Do()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
