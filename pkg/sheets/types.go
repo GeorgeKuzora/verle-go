@@ -21,7 +21,7 @@ type Task struct {
 // Date represents Task date in proper format
 type Date time.Time
 
-func (d Date) toString() string {
+func (d Date) String() string {
 	t := time.Time(d)
 	s := t.Format("02.01.2006")
 	return s
