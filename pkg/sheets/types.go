@@ -9,7 +9,8 @@ type DateTasks struct {
 	Tasks []Task `json:"tasks"`
 }
 
-// Task represents a weeek task card.
+// Task represents a weeek task card. It includes:
+// Card Id, Title, Description, Date
 type Task struct {
 	Id    int    `json:"id"`
 	Title string `json:"title"`
@@ -17,6 +18,7 @@ type Task struct {
 	Date  Date   `json:"date"`
 }
 
+// Date represents Task date in proper format
 type Date time.Time
 
 func (d Date) toString() string {
