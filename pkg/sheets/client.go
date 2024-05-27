@@ -153,7 +153,7 @@ func DeleteData(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks, workplace config.Workplace) {
+func WriteTasksToSheets(w http.ResponseWriter, project Project, workplace config.Workplace) {
 
 	type TasksData struct {
 		Values [][]interface{} `json:"data"`
@@ -161,18 +161,20 @@ func WriteTasksToSheets(w http.ResponseWriter, tasks DateTasks, workplace config
 
 	var tasksData TasksData
 
-	for _, v := range tasks.Tasks {
+	for _, dateTasks := range project.Dates {
+		for _, v := range dateTasks.Tasks {
 
-		var task []interface{}
-		task = append(task, fmt.Sprint(v.Id))
-		task = append(task, v.Title)
-		if v.Desc == "" {
-			task = append(task, "no_description")
-		} else {
-			task = append(task, v.Desc)
+			var task []interface{}
+			task = append(task, fmt.Sprint(v.Id))
+			task = append(task, v.Title)
+			if v.Desc == "" {
+				task = append(task, "no_description")
+			} else {
+				task = append(task, v.Desc)
+			}
+			task = append(task, string(v.Date.String()))
+			tasksData.Values = append(tasksData.Values, task)
 		}
-		task = append(task, string(v.Date.toString()))
-		tasksData.Values = append(tasksData.Values, task)
 	}
 
 	values := sheets.ValueRange{Values: tasksData.Values}

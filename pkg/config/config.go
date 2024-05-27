@@ -3,6 +3,7 @@ package config
 const (
 	spreadsheetID = "1zbh7UWV9NglhkgjHx5-7WnxALfvmRTIgHZhQBdkJhYE"
 	credentials   = "service-account-key.json"
+	DaysToCollect = 10
 )
 
 var WeeekProjects = map[WeeekProjectTypes]int{

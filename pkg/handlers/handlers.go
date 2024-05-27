@@ -21,15 +21,19 @@ func postDayTasks(w http.ResponseWriter, r *http.Request) {
 	for _, wp := range config.Workplaces {
 		currentYear, currentMonth, currentDate := time.Now().Date()
 		current := time.Date(currentYear, currentMonth, currentDate, 1, 1, 1, 1, time.Local)
-		sheets.UpdateTasksData(w, r, wp)
-		for i := 0; i <= 7; i++ {
+		dates := make([]sheets.DateTasks, config.DaysToCollect)
+		for i := 0; i < config.DaysToCollect; i++ {
 			t := weeek.GetWeekDayTasks(current.Format("02.01.2006"), wp)
 			dayTasks := weeek.UnmarshalDateTasks(t)
-			// convert to sheets tasks
 			sheetsTasks := converter.ConvertWeeekSheets(dayTasks)
-			// write converted sheets tasks to sheets
-			sheets.WriteTasksToSheets(w, sheetsTasks, wp)
+			dates[i] = sheetsTasks
 			current = current.AddDate(0, 0, 1)
 		}
+		project := sheets.Project{
+			Dates: dates,
+		}
+		sheets.UpdateTasksData(w, r, wp)
+		// write converted sheets tasks to sheets
+		sheets.WriteTasksToSheets(w, project, wp)
 	}
 }
