@@ -4,6 +4,12 @@ import (
 	"time"
 )
 
+// Project represents all open tasks for a production center.
+// Task is represented as a slice with tasks on future Dates
+type Project struct {
+	Dates []DateTasks `json:"dates"`
+}
+
 // DateTasks represents all tasks for a given date.
 type DateTasks struct {
 	Tasks []Task `json:"tasks"`
