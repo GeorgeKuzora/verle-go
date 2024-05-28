@@ -153,7 +153,7 @@ func DeleteData(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func WriteTasksToSheets(w http.ResponseWriter, project Project, workplace config.Workplace) {
+func WriteTasksToSheets(project Project, workplace config.Workplace) error {
 
 	type TasksData struct {
 		Values [][]interface{} `json:"data"`
@@ -180,11 +180,10 @@ func WriteTasksToSheets(w http.ResponseWriter, project Project, workplace config
 	values := sheets.ValueRange{Values: tasksData.Values}
 	_, err := sheetsService.Spreadsheets.Values.Append(workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range, &values).ValueInputOption("RAW").Do()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		log.Printf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
+		return errors.Errorf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
 	}
-
-	w.WriteHeader(http.StatusCreated)
+	return nil
 }
 func DeleteTasksData(w http.ResponseWriter, r *http.Request, workplace config.Workplace) {
 	// Delete data from the Google Sheet using the Google Sheets API.

@@ -34,6 +34,6 @@ func postDayTasks(w http.ResponseWriter, r *http.Request) {
 		}
 		sheets.UpdateTasksData(wp)
 		// write converted sheets tasks to sheets
-		sheets.WriteTasksToSheets(w, project, wp)
+		sheets.WriteTasksToSheets(project, wp)
 	}
 }
