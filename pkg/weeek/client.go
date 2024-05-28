@@ -27,8 +27,6 @@ func GetWeekDayTasks(day string, workplace config.Workplace) string {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("response status code:", res.StatusCode)
-
 	defer res.Body.Close()
 	if res.StatusCode != http.StatusOK {
 		panic(fmt.Sprintf("unexpected status: got %v", res.Status))
