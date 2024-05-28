@@ -45,9 +45,9 @@ func logFileSetUp(filePath string) {
 	_, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
 		file, err := os.Create(filePath)
-		defer file.Close()
 		if err != nil {
 			log.Fatalf("can't create a log file on path: %s", filePath)
 		}
+		defer file.Close()
 	}
 }
