@@ -214,7 +214,7 @@ func DeleteTasksData(w http.ResponseWriter, r *http.Request, workplace config.Wo
 	w.WriteHeader(http.StatusOK)
 }
 
-func UpdateTasksData(w http.ResponseWriter, r *http.Request, wp config.Workplace) {
+func UpdateTasksData(wp config.Workplace) {
 
 	var updateData [][]interface{}
 	var emptyData []interface{}
@@ -234,8 +234,8 @@ func UpdateTasksData(w http.ResponseWriter, r *http.Request, wp config.Workplace
 		Do()
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+
+		return fmt.Errorf("can't update sheet with id %s", wp.SheetsTable.SpreadsheetID)
 	}
 
 	w.WriteHeader(http.StatusOK)
