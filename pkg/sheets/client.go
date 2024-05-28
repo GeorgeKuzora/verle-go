@@ -214,8 +214,7 @@ func DeleteTasksData(w http.ResponseWriter, r *http.Request, workplace config.Wo
 	w.WriteHeader(http.StatusOK)
 }
 
-func UpdateTasksData(wp config.Workplace) {
-
+func UpdateTasksData(wp config.Workplace) error {
 	var updateData [][]interface{}
 	var emptyData []interface{}
 
@@ -230,13 +229,12 @@ func UpdateTasksData(wp config.Workplace) {
 
 	_, err := sheetsService.Spreadsheets.Values.Update(wp.SheetsTable.SpreadsheetID, wp.SheetsTable.UpdateRange, &values).
 		ValueInputOption("RAW").
-		Context(r.Context()).
+		Context(context.Background()).
 		Do()
-
 	if err != nil {
+		log.Printf("error during update sheet with id %s, list %s", wp.SheetsTable.SpreadsheetID, wp.SheetsTable.Range)
 
 		return fmt.Errorf("can't update sheet with id %s", wp.SheetsTable.SpreadsheetID)
 	}
-
-	w.WriteHeader(http.StatusOK)
+	return nil
 }
