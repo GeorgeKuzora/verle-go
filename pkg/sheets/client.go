@@ -181,7 +181,7 @@ func WriteTasksToSheets(project Project, workplace config.Workplace) error {
 	_, err := sheetsService.Spreadsheets.Values.Append(workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range, &values).ValueInputOption("RAW").Do()
 	if err != nil {
 		log.Printf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
-		return errors.Errorf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
+		return fmt.Errorf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
 	}
 	return nil
 }

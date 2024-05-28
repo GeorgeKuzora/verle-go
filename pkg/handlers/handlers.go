@@ -32,8 +32,15 @@ func postDayTasks(w http.ResponseWriter, r *http.Request) {
 		project := sheets.Project{
 			Dates: dates,
 		}
-		sheets.UpdateTasksData(wp)
+		err := sheets.UpdateTasksData(wp)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		// write converted sheets tasks to sheets
-		sheets.WriteTasksToSheets(project, wp)
+		err = sheets.WriteTasksToSheets(project, wp)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
+	w.WriteHeader(http.StatusOK)
 }
