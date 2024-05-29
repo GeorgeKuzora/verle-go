@@ -1,6 +1,9 @@
 package tasks
 
 import (
+	"errors"
+	"fmt"
+	"log"
 	"time"
 )
 
@@ -36,6 +39,33 @@ type Project struct {
 	TasksWriter  Writer
 }
 
+func (p *Project) Fetch(dates []Date) error {
+	if p == nil {
+		log.Println("expected Project but received nil")
+		return errors.New("expected Project but received nil")
+	}
+	ts, err := p.TasksFetcher.Fetch(dates)
+	if err != nil {
+		log.Printf("can't fetch tasks for Project: %v, from Fetcher: %v", p, p.TasksFetcher)
+		return err
+	}
+	p.Dates = ts
+	return nil
+}
+
+func (p *Project) Write(dates []Tasks) error {
+	if p == nil {
+		log.Println("expected Project but received nil")
+		return errors.New("expected Project but received nil")
+	}
+	err := p.TasksWriter.Write(dates)
+	if err != nil {
+		log.Printf("can't write tasks for Project: %v, to Writer: %v", p, p.TasksWriter)
+		return err
+	}
+	return nil
+}
+
 // Tasks represents all tasks for a given date.
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
@@ -61,10 +91,10 @@ func (d Date) String() string {
 
 // Interface for fetching tasks data from an external service
 type Fetcher interface {
-	Fetch() (Tasks, error)
+	Fetch(dates []Date) ([]Tasks, error)
 }
 
 // Interface for writing tasks data to an external service
 type Writer interface {
-	Write() error
+	Write(dates []Tasks) error
 }
