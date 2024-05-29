@@ -36,16 +36,6 @@ type Project struct {
 	TasksWriter  Writer
 }
 
-// Interface for fetching tasks data from an external service
-type Fetcher interface {
-	Fetch() (Tasks, error)
-}
-
-// Interface for writing tasks data to an external service
-type Writer interface {
-	Write() error
-}
-
 // Tasks represents all tasks for a given date.
 type Tasks struct {
 	Tasks []Task `json:"tasks"`
@@ -67,4 +57,14 @@ func (d Date) String() string {
 	t := time.Time(d)
 	s := t.Format("02.01.2006")
 	return s
+}
+
+// Interface for fetching tasks data from an external service
+type Fetcher interface {
+	Fetch() (Tasks, error)
+}
+
+// Interface for writing tasks data to an external service
+type Writer interface {
+	Write() error
 }
