@@ -23,6 +23,16 @@ const (
 // that will be fetched and proceed
 type PeriodInDays int
 
+func (pid *PeriodInDays) GetDatesFromToday() ([]Date, error) {
+	dates := make([]Date, *pid)
+	current := time.Now()
+	for i := 0; i < int(*pid); i++ {
+		dates[i] = Date(current)
+		current = current.AddDate(0, 0, 1)
+	}
+	return dates, nil
+}
+
 // Project represents all open tasks for a production center.
 // Task is represented as a slice with tasks on future Dates
 type Project struct {
