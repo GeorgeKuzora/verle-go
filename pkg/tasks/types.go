@@ -75,10 +75,13 @@ type Task struct {
 // Date represents Task date in proper format
 type Date time.Time
 
-func (d Date) String() string {
-	t := time.Time(d)
-	s := t.Format("02.01.2006")
-	return s
+func (d *Date) String() (string, error) {
+	if d == nil {
+		log.Println("expected Date but received nil")
+		return "", errors.New("expected Date but received nil")
+	}
+	t := time.Time(*d)
+	return t.Format("02.01.2006"), nil
 }
 
 // Interface for fetching tasks data from an external service
