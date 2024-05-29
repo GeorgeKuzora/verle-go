@@ -9,9 +9,14 @@ import (
 	"net/http"
 	"time"
 	"verle_go/pkg/config"
+	"verle_go/pkg/tasks"
 
 	"github.com/joho/godotenv"
 )
+
+type WeeekTaskFetcher struct {
+	project tasks.ProjectType
+}
 
 func GetWeekDayTasks(day string, workplace config.Workplace) string {
 	client := &http.Client{
