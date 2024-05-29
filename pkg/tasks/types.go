@@ -5,14 +5,14 @@ import (
 )
 
 // Metadata represents information about project
-// that is needed to indentify project properties
+// that is needed to identify project properties
 type Metadata struct {
 	Type   ProjectType
 	Period PeriodInDays
 }
 
-// ProjectType represents type of avaliable projects
-// Usualy it named after concrete production center
+// ProjectType represents type of available projects
+// Usually it named after concrete production center
 type ProjectType int
 
 const (
@@ -25,7 +25,7 @@ const (
 )
 
 // PeriodInDays represents period from today
-// that will be fetched and procced
+// that will be fetched and proceed
 type PeriodInDays int
 
 // Project represents all open tasks for a production center.
