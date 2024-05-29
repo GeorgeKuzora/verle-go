@@ -12,6 +12,20 @@ type Writer interface {
 	Write() error
 }
 
+type WeeekProjectTypes int
+
+const (
+	Unknown WeeekProjectTypes = iota
+	IMF120
+	Trobart
+	Drip
+	Capsule
+	Assembly
+)
+
+type Metadata struct {
+}
+
 // Project represents all open tasks for a production center.
 // Task is represented as a slice with tasks on future Dates
 type Project struct {
