@@ -2,17 +2,9 @@ package tasks
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"time"
 )
-
-// Metadata represents information about project
-// that is needed to identify project properties
-type Metadata struct {
-	Type   ProjectType
-	Period PeriodInDays
-}
 
 // ProjectType represents type of available projects
 // Usually it named after concrete production center
