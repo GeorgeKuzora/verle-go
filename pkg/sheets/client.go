@@ -87,6 +87,39 @@ type TaskWriter struct {
 	Project tasks.ProjectType
 }
 
+func (tw TaskWriter) Write(project Project, workplace config.Workplace) error {
+
+	type TasksData struct {
+		Values [][]interface{} `json:"data"`
+	}
+
+	var tasksData TasksData
+
+	for _, dateTasks := range project.Dates {
+		for _, v := range dateTasks.Tasks {
+
+			var task []interface{}
+			task = append(task, fmt.Sprint(v.Id))
+			task = append(task, v.Title)
+			if v.Desc == "" {
+				task = append(task, "no_description")
+			} else {
+				task = append(task, v.Desc)
+			}
+			task = append(task, string(v.Date.String()))
+			tasksData.Values = append(tasksData.Values, task)
+		}
+	}
+
+	values := sheets.ValueRange{Values: tasksData.Values}
+	_, err := sheetsService.Spreadsheets.Values.Append(workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range, &values).ValueInputOption("RAW").Do()
+	if err != nil {
+		log.Printf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
+		return fmt.Errorf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
+	}
+	return nil
+}
+
 func ReadData(w http.ResponseWriter, r *http.Request) {
 	resp, err := sheetsService.Spreadsheets.Values.Get(spreadsheetID, readRange).Context(r.Context()).Do()
 	if err != nil {
@@ -198,38 +231,6 @@ func DeleteData(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func WriteTasksToSheets(project Project, workplace config.Workplace) error {
-
-	type TasksData struct {
-		Values [][]interface{} `json:"data"`
-	}
-
-	var tasksData TasksData
-
-	for _, dateTasks := range project.Dates {
-		for _, v := range dateTasks.Tasks {
-
-			var task []interface{}
-			task = append(task, fmt.Sprint(v.Id))
-			task = append(task, v.Title)
-			if v.Desc == "" {
-				task = append(task, "no_description")
-			} else {
-				task = append(task, v.Desc)
-			}
-			task = append(task, string(v.Date.String()))
-			tasksData.Values = append(tasksData.Values, task)
-		}
-	}
-
-	values := sheets.ValueRange{Values: tasksData.Values}
-	_, err := sheetsService.Spreadsheets.Values.Append(workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range, &values).ValueInputOption("RAW").Do()
-	if err != nil {
-		log.Printf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
-		return fmt.Errorf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
-	}
-	return nil
-}
 func DeleteTasksData(w http.ResponseWriter, r *http.Request, workplace config.Workplace) {
 	// Delete data from the Google Sheet using the Google Sheets API.
 	var requests []*sheets.Request
