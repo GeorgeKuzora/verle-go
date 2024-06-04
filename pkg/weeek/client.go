@@ -46,7 +46,7 @@ var projects = map[tasks.ProjectType]int{
 }
 
 type TaskFetcher struct {
-	project tasks.ProjectType
+	Project tasks.ProjectType
 }
 
 func (tf TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
@@ -55,10 +55,10 @@ func (tf TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 	allPrefix := "&all="
 	allValue := "0"
 
-	projNum, ok := projects[tf.project]
+	projNum, ok := projects[tf.Project]
 	if ok == false {
-		log.Printf("can't fetch data for project %v, unknown project", tf.project)
-		return nil, fmt.Errorf("can't fetch data for project %v, unknown project", tf.project)
+		log.Printf("can't fetch data for project %v, unknown project", tf.Project)
+		return nil, fmt.Errorf("can't fetch data for project %v, unknown project", tf.Project)
 	}
 	p := fmt.Sprint(projNum)
 
@@ -82,19 +82,27 @@ func (tf TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 			log.Printf("can't get a response from a link: %s", link)
 			continue
 		}
-		defer res.Body.Close()
 		if res.StatusCode != http.StatusOK {
 			log.Printf("unexpected status: got %v in response from link: %s", res.Status, link)
 			continue
 		}
-		resData := readResponse(res.Body)
-		dateTasks := UnmarshalDateTasks(resData)
-		t
+		defer res.Body.Close()
+		resData, err := readResponse(res.Body)
+		if err != nil {
+			log.Printf("can't read response body from link %s", link)
+			continue
+		}
+		dateTasks, err := UnmarshalDateTasks(resData)
+		if err != nil {
+			log.Printf("can't unmarshal response data from link %s", link)
+			continue
+		}
+		t[i] = dateTasks
 	}
-
+	return t, nil
 }
 
-func readResponse(r io.Reader) string {
+func readResponse(r io.Reader) (string, error) {
 	buf := make([]byte, 2048)
 	bytes := []byte{}
 	for {
@@ -102,19 +110,21 @@ func readResponse(r io.Reader) string {
 		bytes = append(bytes, buf[:n]...)
 		if err == io.EOF {
 			var out string = string(bytes)
-			return out
+			return out, nil
 		}
 		if err != nil {
-			panic(err)
+			log.Println("can't read response from weeek", err)
+			return "", err
 		}
 	}
 }
 
-func UnmarshalDateTasks(data string) DateTasks {
-	var tasks DateTasks
+func UnmarshalDateTasks(data string) (tasks.Tasks, error) {
+	var tasks tasks.Tasks
 	err := json.Unmarshal([]byte(data), &tasks)
 	if err != nil {
-		log.Fatalln("Can't Unmarshal weeek data", err)
+		log.Println("Can't Unmarshal weeek data", err)
+		return tasks, err
 	}
-	return tasks
+	return tasks, nil
 }
