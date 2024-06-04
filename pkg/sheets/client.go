@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"verle_go/pkg/config"
+	"verle_go/pkg/tasks"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -40,6 +41,50 @@ func InitClient() {
 		log.Fatalf("Unable to create Google Sheets service: %v", err)
 	}
 
+}
+
+var projects = map[tasks.ProjectType]project{
+	tasks.IMF120: project{
+		SpreadsheetID: spreadsheetID,
+		Range:         "IMF!A:D",
+		UpdateRange:   "IMF!A1:D200",
+		SheetID:       1330258137,
+	},
+	tasks.Trobart: project{
+		SpreadsheetID: spreadsheetID,
+		Range:         "TROBART!A:D",
+		UpdateRange:   "TROBART!A1:D200",
+		SheetID:       1738797376,
+	},
+	tasks.Drip: project{
+		SpreadsheetID: spreadsheetID,
+		Range:         "DRIPS!A:D",
+		UpdateRange:   "DRIPS!A1:D200",
+		SheetID:       612152640,
+	},
+	tasks.Capsule: project{
+		SpreadsheetID: spreadsheetID,
+		Range:         "CAPSULES!A:D",
+		UpdateRange:   "CAPSULES!A1:D200",
+		SheetID:       1199560039,
+	},
+	tasks.Assembly: project{
+		SpreadsheetID: spreadsheetID,
+		Range:         "ASSEMBLY!A:D",
+		UpdateRange:   "ASSEMBLY!A1:D200",
+		SheetID:       1355663488,
+	},
+}
+
+type project struct {
+	SpreadsheetID string
+	Range         string
+	UpdateRange   string
+	SheetID       int
+}
+
+type TaskWriter struct {
+	Project tasks.ProjectType
 }
 
 func ReadData(w http.ResponseWriter, r *http.Request) {
