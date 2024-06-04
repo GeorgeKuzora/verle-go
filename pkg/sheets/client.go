@@ -87,7 +87,12 @@ type TaskWriter struct {
 	Project tasks.ProjectType
 }
 
-func (tw TaskWriter) Write(project Project, workplace config.Workplace) error {
+func (tw TaskWriter) Write(dates []tasks.Tasks) error {
+	err := tw.cleanRange()
+	if err != nil {
+		log.Printf("can't clean spreadsheet for project %v", tw.Project)
+		return err
+	}
 
 	type TasksData struct {
 		Values [][]interface{} `json:"data"`
@@ -95,8 +100,8 @@ func (tw TaskWriter) Write(project Project, workplace config.Workplace) error {
 
 	var tasksData TasksData
 
-	for _, dateTasks := range project.Dates {
-		for _, v := range dateTasks.Tasks {
+	for _, d := range dates {
+		for _, v := range d.Tasks {
 
 			var task []interface{}
 			task = append(task, fmt.Sprint(v.Id))
@@ -106,16 +111,58 @@ func (tw TaskWriter) Write(project Project, workplace config.Workplace) error {
 			} else {
 				task = append(task, v.Desc)
 			}
-			task = append(task, string(v.Date.String()))
+			ds, err := v.Date.String()
+			if err != nil {
+				log.Printf("can't covert date to string for %v", v.Date)
+				task = append(task, "")
+			} else {
+				task = append(task, ds)
+			}
 			tasksData.Values = append(tasksData.Values, task)
 		}
 	}
 
 	values := sheets.ValueRange{Values: tasksData.Values}
-	_, err := sheetsService.Spreadsheets.Values.Append(workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range, &values).ValueInputOption("RAW").Do()
+	p, ok := projects[tw.Project]
+	if ok == false {
+		log.Printf("can't find sheets project from a project %v", tw.Project)
+		return fmt.Errorf("can't find sheets project from a project %v", tw.Project)
+	}
+	_, err = sheetsService.Spreadsheets.Values.Append(p.SpreadsheetID, p.Range, &values).ValueInputOption("RAW").Do()
 	if err != nil {
-		log.Printf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
-		return fmt.Errorf("error during writing data in sheet with id %s, list %s", workplace.SheetsTable.SpreadsheetID, workplace.SheetsTable.Range)
+		log.Printf("error during writing data in sheet with id %s, list %s", p.SpreadsheetID, p.Range)
+		return fmt.Errorf("error during writing data in sheet with id %s, list %s", p.SpreadsheetID, p.Range)
+	}
+	return nil
+}
+
+func (tw TaskWriter) cleanRange() error {
+	var updateData [][]interface{}
+	var emptyData []interface{}
+
+	for i := 0; i < 4; i++ {
+		emptyData = append(emptyData, "")
+	}
+	for i := 0; i < 200; i++ {
+		updateData = append(updateData, emptyData)
+	}
+	// Update data in the Google Sheets using the Google Sheets API.
+	values := sheets.ValueRange{Values: updateData}
+
+	p, ok := projects[tw.Project]
+	if ok == false {
+		log.Printf("can't find sheets project from a project %v", tw.Project)
+		return fmt.Errorf("can't find sheets project from a project %v", tw.Project)
+	}
+
+	_, err := sheetsService.Spreadsheets.Values.Update(p.SpreadsheetID, p.UpdateRange, &values).
+		ValueInputOption("RAW").
+		Context(context.Background()).
+		Do()
+	if err != nil {
+		log.Printf("error during update sheet with id %s, list %s", p.SpreadsheetID, p.Range)
+
+		return fmt.Errorf("can't update sheet with id %s", p.SpreadsheetID)
 	}
 	return nil
 }
