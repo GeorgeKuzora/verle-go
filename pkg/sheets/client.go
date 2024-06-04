@@ -23,7 +23,7 @@ const (
 var sheetsService *sheets.Service
 
 func InitClient() {
-	// Load the Google Sheets API credentials from your JSON file.
+	// Locad the Google Sheets API credentials from your JSON file.
 	creds, err := os.ReadFile(credentials)
 	if err != nil {
 		log.Fatalf("Unable to read credentials file: %v", err)
