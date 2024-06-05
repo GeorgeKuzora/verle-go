@@ -33,28 +33,28 @@ func writeTasksToSheets(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, pt := range projectTypes {
-		fetcher := weeek.TaskFetcher{
-			Project: pt,
-		}
-		writer := sheets.TaskWriter{
-			Project: pt,
-		}
-		project := tasks.Project{
-			TasksFetcher: fetcher,
-			TasksWriter:  writer,
-		}
-		err := project.Fetch(dates)
-		if err != nil {
-			log.Printf("can't fetch from weeek for a project %v", project)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			break
-		}
-		err = project.Write(project.Dates)
-		if err != nil {
-			log.Printf("can't write to sheets for a project %v", project)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			break
-		}
+		go func(pt tasks.ProjectType) {
+			fetcher := weeek.TaskFetcher{
+				Project: pt,
+			}
+			writer := sheets.TaskWriter{
+				Project: pt,
+			}
+			project := tasks.Project{
+				TasksFetcher: fetcher,
+				TasksWriter:  writer,
+			}
+			err := project.Fetch(dates)
+			if err != nil {
+				log.Printf("can't fetch from weeek for a project %v", project)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			err = project.Write(project.Dates)
+			if err != nil {
+				log.Printf("can't write to sheets for a project %v", project)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+		}(pt)
 	}
 	w.WriteHeader(http.StatusOK)
 }
