@@ -86,13 +86,35 @@ type Task struct {
 // Date represents Task date in proper format
 type Date time.Time
 
+const dateFormat string = "02.01.2006"
+
 func (d *Date) String() (string, error) {
 	if d == nil {
 		log.Println("expected Date but received nil")
 		return "", errors.New("expected Date but received nil")
 	}
 	t := time.Time(*d)
-	return t.Format("02.01.2006"), nil
+	return t.Format(dateFormat), nil
+}
+
+func (d Date) MarshalJSON() ([]byte, error) {
+	t := time.Time(d)
+	formatted := t.Format(dateFormat)
+	return json.Marshal(formatted)
+}
+
+func (d *Date) UnmarshalJSON(b []byte) error {
+	var s string
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	t, err := time.Parse(dateFormat, s)
+	if err != nil {
+		return err
+	}
+	*d = Date(t)
+	return nil
 }
 
 // Interface for fetching tasks data from an external service
