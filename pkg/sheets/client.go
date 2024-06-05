@@ -157,7 +157,6 @@ func (tw TaskWriter) cleanRange() error {
 		Do()
 	if err != nil {
 		log.Printf("error during update sheet with id %s, list %s", p.SpreadsheetID, p.Range)
-
 		return fmt.Errorf("can't update sheet with id %s", p.SpreadsheetID)
 	}
 	return nil
