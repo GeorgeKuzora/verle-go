@@ -120,7 +120,7 @@ func (tw TaskWriter) Write(dates []tasks.Tasks) error {
 
 	values := sheets.ValueRange{Values: tasksData.Values}
 	p, ok := projects[tw.Project]
-	if ok == false {
+	if !ok {
 		log.Printf("can't find sheets project from a project %v", tw.Project)
 		return fmt.Errorf("can't find sheets project from a project %v", tw.Project)
 	}
@@ -146,7 +146,7 @@ func (tw TaskWriter) cleanRange() error {
 	values := sheets.ValueRange{Values: updateData}
 
 	p, ok := projects[tw.Project]
-	if ok == false {
+	if !ok {
 		log.Printf("can't find sheets project from a project %v", tw.Project)
 		return fmt.Errorf("can't find sheets project from a project %v", tw.Project)
 	}

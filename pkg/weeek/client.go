@@ -30,7 +30,7 @@ func getWeeekToken() string {
 		log.Fatalf("can't read a file with environment variables %s", envVarFileName)
 	}
 	token, ok := m[tokenVarName]
-	if ok == false {
+	if !ok {
 		log.Fatalf("can't find variable %s in a file %s", tokenVarName, envVarFileName)
 	}
 	token = "Bearer " + token
@@ -56,7 +56,7 @@ func (tf TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 	allValue := "0"
 
 	projNum, ok := projects[tf.Project]
-	if ok == false {
+	if !ok {
 		log.Printf("can't fetch data for project %v, unknown project", tf.Project)
 		return nil, fmt.Errorf("can't fetch data for project %v, unknown project", tf.Project)
 	}
