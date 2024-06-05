@@ -1,11 +1,10 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
-	"time"
-	"verle_go/pkg/config"
-	"verle_go/pkg/converter"
 	"verle_go/pkg/sheets"
+	"verle_go/pkg/tasks"
 	"verle_go/pkg/weeek"
 )
 
@@ -14,32 +13,47 @@ func InitClients() {
 }
 
 func RegisterHandlers() {
-	http.HandleFunc("/post", postDayTasks)
+	http.HandleFunc("/tasks", writeTasksToSheets)
 }
 
-func postDayTasks(w http.ResponseWriter, r *http.Request) {
-	for _, wp := range config.Workplaces {
-		currentYear, currentMonth, currentDate := time.Now().Date()
-		current := time.Date(currentYear, currentMonth, currentDate, 1, 1, 1, 1, time.Local)
-		dates := make([]sheets.DateTasks, config.DaysToCollect)
-		for i := 0; i < config.DaysToCollect; i++ {
-			t := weeek.GetWeekDayTasks(current.Format("02.01.2006"), wp)
-			dayTasks := weeek.UnmarshalDateTasks(t)
-			sheetsTasks := converter.ConvertWeeekSheets(dayTasks)
-			dates[i] = sheetsTasks
-			current = current.AddDate(0, 0, 1)
+func writeTasksToSheets(w http.ResponseWriter, r *http.Request) {
+	periodInDays := tasks.PeriodInDays(10)
+	dates, err := periodInDays.GetDatesFromToday()
+	if err != nil {
+		log.Printf("can't gets dates to process")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	projectTypes := []tasks.ProjectType{
+		tasks.IMF120,
+		tasks.Trobart,
+		tasks.Drip,
+		tasks.Capsule,
+		tasks.Assembly,
+	}
+
+	for _, pt := range projectTypes {
+		fetcher := weeek.TaskFetcher{
+			Project: pt,
 		}
-		project := sheets.Project{
-			Dates: dates,
+		writer := sheets.TaskWriter{
+			Project: pt,
 		}
-		err := sheets.UpdateTasksData(wp)
+		project := tasks.Project{
+			TasksFetcher: fetcher,
+			TasksWriter:  writer,
+		}
+		err := project.Fetch(dates)
 		if err != nil {
+			log.Printf("can't fetch from weeek for a project %v", project)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			break
 		}
-		// write converted sheets tasks to sheets
-		err = sheets.WriteTasksToSheets(project, wp)
+		err = project.Write(project.Dates)
 		if err != nil {
+			log.Printf("can't write to sheets for a project %v", project)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			break
 		}
 	}
 	w.WriteHeader(http.StatusOK)
