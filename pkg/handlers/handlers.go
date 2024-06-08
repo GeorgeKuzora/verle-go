@@ -19,46 +19,63 @@ func RegisterHandlers() {
 }
 
 func writeTasksToSheets(w http.ResponseWriter, r *http.Request) {
-	periodInDays := tasks.PeriodInDays(10)
-	dates, err := periodInDays.GetDatesFromToday()
-	if err != nil {
-		log.Printf("can't gets dates to process")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	some_template, _ := template.ParseFiles("templates/tasks.html")
+	if r.Method == "GET" {
+		err := some_template.Execute(w, nil)
 
-	projectTypes := []tasks.ProjectType{
-		tasks.IMF120,
-		tasks.Trobart,
-		tasks.Drip,
-		tasks.Capsule,
-		tasks.Assembly,
+		if err != nil {
+			log.Println("error during page rendering")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
+	if r.Method == "POST" {
+		periodInDays := tasks.PeriodInDays(10)
+		dates, err := periodInDays.GetDatesFromToday()
+		if err != nil {
+			log.Printf("can't gets dates to process")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
-	for _, pt := range projectTypes {
-		go func(pt tasks.ProjectType) {
-			fetcher := weeek.TaskFetcher{
-				Project: pt,
-			}
-			writer := sheets.TaskWriter{
-				Project: pt,
-			}
-			project := tasks.Project{
-				TasksFetcher: fetcher,
-				TasksWriter:  writer,
-			}
-			err := project.Fetch(dates)
-			if err != nil {
-				log.Printf("can't fetch from weeek for a project %v", project)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			err = project.Write(project.Dates)
-			if err != nil {
-				log.Printf("can't write to sheets for a project %v", project)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-		}(pt)
+		projectTypes := []tasks.ProjectType{
+			tasks.IMF120,
+			tasks.Trobart,
+			tasks.Drip,
+			tasks.Capsule,
+			tasks.Assembly,
+		}
+
+		for _, pt := range projectTypes {
+			go func(pt tasks.ProjectType) {
+				fetcher := weeek.TaskFetcher{
+					Project: pt,
+				}
+				writer := sheets.TaskWriter{
+					Project: pt,
+				}
+				project := tasks.Project{
+					TasksFetcher: fetcher,
+					TasksWriter:  writer,
+				}
+				err := project.Fetch(dates)
+				if err != nil {
+					log.Printf("can't fetch from weeek for a project %v", project)
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+				err = project.Write(project.Dates)
+				if err != nil {
+					log.Printf("can't write to sheets for a project %v", project)
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+			}(pt)
+		}
+		w.WriteHeader(http.StatusOK)
+
+		err = some_template.Execute(w, nil)
+		if err != nil {
+			log.Println("error during page rendering")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func render(w http.ResponseWriter, r *http.Request) {
