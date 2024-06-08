@@ -67,7 +67,7 @@ func render(w http.ResponseWriter, r *http.Request) {
 		Text  string
 	}
 	if r.Method == "GET" {
-		some_template, _ := template.ParseFiles("templates/index.html")
+		some_template, _ := template.ParseFiles("templates/tasks.html")
 		some_content := Content{
 			Title: "Это заголовок",
 			Text:  "Это текст",
@@ -75,7 +75,7 @@ func render(w http.ResponseWriter, r *http.Request) {
 		err := some_template.Execute(w, some_content)
 
 		if err != nil {
-			log.Print("error during page rendering")
+			log.Println("error during page rendering")
 		}
 	}
 }
