@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"verle_go/pkg/sheets"
@@ -14,6 +15,7 @@ func InitClients() {
 
 func RegisterHandlers() {
 	http.HandleFunc("/tasks", writeTasksToSheets)
+	http.HandleFunc("/render", render)
 }
 
 func writeTasksToSheets(w http.ResponseWriter, r *http.Request) {
@@ -57,4 +59,23 @@ func writeTasksToSheets(w http.ResponseWriter, r *http.Request) {
 		}(pt)
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func render(w http.ResponseWriter, r *http.Request) {
+	type Content struct {
+		Title string
+		Text  string
+	}
+	if r.Method == "GET" {
+		some_template, _ := template.ParseFiles("templates/index.html")
+		some_content := Content{
+			Title: "Это заголовок",
+			Text:  "Это текст",
+		}
+		err := some_template.Execute(w, some_content)
+
+		if err != nil {
+			log.Print("error during page rendering")
+		}
+	}
 }
