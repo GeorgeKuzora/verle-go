@@ -77,11 +77,11 @@ type Tasks struct {
 // Task represents a weeek task card. It includes:
 // Card Id, Title, Description, Date
 type Task struct {
-	Id       int    `json:"id"`
-	Title    string `json:"title"`
-	Desc     string `json:"description"`
-	Date     Date   `json:"date"`
-	SubTasks []int  `json:"subTasks"`
+	Id         int    `json:"id"`
+	Title      string `json:"title"`
+	Desc       string `json:"description"`
+	Date       Date   `json:"date"`
+	SubTaskIDs []int  `json:"subTasks"`
 }
 
 // Date represents Task date in proper format
