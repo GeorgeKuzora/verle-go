@@ -84,6 +84,23 @@ type Task struct {
 	SubTaskIDs []int  `json:"subTasks"`
 }
 
+func (t *Task) fetchSubTasks(f Fetcher) ([]Task, error) {
+	if t == nil {
+		log.Println("expected Task but received nil")
+		return nil, errors.New("expected Task but received nil")
+	}
+	subTasks := make([]Task, len(t.SubTaskIDs))
+	for i, taskId := range t.SubTaskIDs {
+		subTask, err := f.FetchById(taskId)
+		if err != nil {
+			log.Printf("can't fetch a subtask with id %d from a task with id %d", taskId, t.Id)
+			continue
+		}
+		subTasks[i] = subTask
+	}
+	return subTasks, nil
+}
+
 // Date represents Task date in proper format
 type Date time.Time
 
