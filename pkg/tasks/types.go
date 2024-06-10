@@ -120,6 +120,7 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 // Interface for fetching tasks data from an external service
 type Fetcher interface {
 	Fetch(dates []Date) ([]Tasks, error)
+	FetchById(id int) (Task, error)
 }
 
 // Interface for writing tasks data to an external service
