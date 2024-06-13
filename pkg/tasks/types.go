@@ -47,12 +47,43 @@ func (p *Project) Fetch(dates []Date) error {
 		log.Println("expected Project but received nil")
 		return errors.New("expected Project but received nil")
 	}
-	ts, err := p.TasksFetcher.Fetch(dates)
+	tasksForDates, err := p.TasksFetcher.Fetch(dates)
 	if err != nil {
 		log.Printf("can't fetch tasks for Project: %v, from Fetcher: %v", p, p.TasksFetcher)
 		return err
 	}
-	p.Dates = ts
+	p.Dates = tasksForDates
+	err = p.fetchSubTasks()
+	if err != nil {
+		log.Printf("can't fetch subtasks for Project: %v, from Fetcher: %v", p, p.TasksFetcher)
+	}
+	return nil
+}
+
+func (p *Project) fetchSubTasks() error {
+	if p == nil {
+		log.Println("expected Project but received nil")
+		return errors.New("expected Project but received nil")
+	}
+	count := 0
+	subTasksPerDate := make(map[int]Tasks)
+	for _, date := range p.Dates {
+		for _, task := range date.Tasks {
+			subTasks, err := task.fetchSubTasks(p.TasksFetcher)
+			if err != nil {
+				log.Printf("can't fetch subTasks for a task %v", task)
+				continue
+			}
+			if len(subTasks) > 0 {
+				subTasksPerDate[count] = Tasks{Tasks: subTasks}
+				count += 1
+			}
+		}
+	}
+
+	for _, v := range subTasksPerDate {
+		p.Dates = append(p.Dates, v)
+	}
 	return nil
 }
 
