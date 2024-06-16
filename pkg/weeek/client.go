@@ -49,7 +49,7 @@ type TaskFetcher struct {
 	Project tasks.ProjectType
 }
 
-func (*tf TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
+func (tf *TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 	urlPrefix := "https://api.weeek.net/public/v1/tm/tasks?day="
 	projPrefix := "&projectId="
 	allPrefix := "&all="
@@ -102,7 +102,7 @@ func (*tf TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 	return t, nil
 }
 
-func (*tf TaskFetcher) FetchById(id int) (tasks.Task, error) {
+func (tf *TaskFetcher) FetchById(id int) (tasks.Task, error) {
 	if tf == nil {
 		log.Print("expected TaskFetcher but received nil")
 		return nil, fmt.Error("expected TaskFetcher but received nil")
