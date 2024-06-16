@@ -165,11 +165,21 @@ func UnmarshalDateTasks(data string) (tasks.Tasks, error) {
 }
 
 func UnmarshalTask(data string) (tasks.Task, error) {
+	type Response struct {
+		Success bool       `json:"success"`
+		Task    tasks.Task `json:"task"`
+	}
+	var response Response
 	var task tasks.Task
-	err := json.Unmarshal([]byte(data), &task)
+	err := json.Unmarshal([]byte(data), &response)
 	if err != nil {
 		log.Printf("Can't Unmarshal weeek Task data from a string %s", data)
 		return task, err
 	}
+	if !response.Success {
+		log.Printf("unsuccessful Fetch for a string %s", data)
+		return task, fmt.Errorf("unsuccessful Fetch for a string %s", data)
+	}
+	task = response.Task
 	return task, nil
 }
