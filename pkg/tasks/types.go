@@ -153,14 +153,24 @@ func (d Date) MarshalJSON() ([]byte, error) {
 }
 
 func (d *Date) UnmarshalJSON(b []byte) error {
+	if d == nil {
+		log.Println("expected Date but received nil")
+		return errors.New("expected Date but received nil")
+	}
 	var s string
+	var t time.Time
+	defaultDate := time.Date(1900, 1, 1, 0, 0, 0, 0, time.Local)
 	err := json.Unmarshal(b, &s)
 	if err != nil {
-		return err
+		log.Println("can't unmarshal Date", err)
+		*d = Date(defaultDate)
+		return nil
 	}
-	t, err := time.Parse(dateFormat, s)
+	t, err = time.Parse(dateFormat, s)
 	if err != nil {
-		return err
+		log.Println("can't unmarshal Date", err)
+		*d = Date(defaultDate)
+		return nil
 	}
 	*d = Date(t)
 	return nil
