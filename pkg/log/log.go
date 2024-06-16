@@ -22,7 +22,7 @@ func getLogFileWriter(path string, fileName string) (*os.File, error) {
 	filePath := path + "/" + fileName
 	logDirSetUp(path)
 	logFileSetUp(filePath)
-	file, err := os.Open(filePath)
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("unexpected error during creating log file Writer, on path: %s", filePath)
 	}
