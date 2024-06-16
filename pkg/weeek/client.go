@@ -103,37 +103,38 @@ func (tf *TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 }
 
 func (tf *TaskFetcher) FetchById(id int) (tasks.Task, error) {
+	var task tasks.Task
 	if tf == nil {
 		log.Print("expected TaskFetcher but received nil")
-		return nil, fmt.Error("expected TaskFetcher but received nil")
+		return task, fmt.Errorf("expected TaskFetcher but received nil")
 	}
 	urlPrefix := "https://api.weeek.net/public/v1/tm/tasks/"
 	link := urlPrefix + fmt.Sprint(id)
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, link, nil)
 	if err != nil {
 		log.Printf("can't create a GET request to link: %s", link)
-		return nil, fmt.Errorf("can't create a GET request to link: %s", link)
+		return task, fmt.Errorf("can't create a GET request to link: %s", link)
 	}
 	req.Header.Add("Authorization", token)
 	res, err := client.Do(req)
 	if err != nil {
 		log.Printf("can't get a response from a link: %s", link)
-		return nil, fmt.Errorf("can't get a response from a link: %s", link)
+		return task, fmt.Errorf("can't get a response from a link: %s", link)
 	}
 	if res.StatusCode != http.StatusOK {
 		log.Printf("unexpected status: got %v in response from link: %s", res.Status, link)
-		return nil, fmt.Errorf("unexpected status: got %v in response from link: %s", link)
+		return task, fmt.Errorf("unexpected status: got %v in response from link: %s", res.Status, link)
 	}
 	defer res.Body.Close()
 	resData, err := readResponse(res.Body)
 	if err != nil {
 		log.Printf("can't read response body from link %s", link)
-		return nil, fmt.Errorf("can't read response body from link %s", link)
+		return task, fmt.Errorf("can't read response body from link %s", link)
 	}
-	task, err := UnmarshalTask(resData)
+	task, err = UnmarshalTask(resData)
 	if err != nil {
 		log.Printf("can't unmarshal response data from link %s", link)
-		return nil, fmt.Errorf("can't unmarshal response data from link %s", link)
+		return task, fmt.Errorf("can't unmarshal response data from link %s", link)
 	}
 	return task, nil
 }
@@ -159,7 +160,7 @@ func UnmarshalDateTasks(data string) (tasks.Tasks, error) {
 	var tasks tasks.Tasks
 	err := json.Unmarshal([]byte(data), &tasks)
 	if err != nil {
-		log.Println("Can't Unmarshal weeek Tasks data from a string %s", data, err)
+		log.Printf("Can't Unmarshal weeek Tasks data from a string %s", data)
 		return tasks, err
 	}
 	return tasks, nil
@@ -169,7 +170,7 @@ func UnmarshalTask(data string) (tasks.Task, error) {
 	var task tasks.Task
 	err := json.Unmarshal([]byte(data), &task)
 	if err != nil {
-		log.Printf("Can't Unmarshal weeek Task data from a string %s", data, err)
+		log.Printf("Can't Unmarshal weeek Task data from a string %s", data)
 		return task, err
 	}
 	return task, nil
