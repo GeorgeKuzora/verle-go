@@ -49,7 +49,7 @@ type TaskFetcher struct {
 	Project tasks.ProjectType
 }
 
-func (tf *TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
+func (tf TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 	urlPrefix := "https://api.weeek.net/public/v1/tm/tasks?day="
 	projPrefix := "&projectId="
 	allPrefix := "&all="
@@ -102,15 +102,13 @@ func (tf *TaskFetcher) Fetch(dates []tasks.Date) ([]tasks.Tasks, error) {
 	return t, nil
 }
 
-func (tf *TaskFetcher) FetchById(id int) (tasks.Task, error) {
-	var task tasks.Task
-	if tf == nil {
-		log.Print("expected TaskFetcher but received nil")
-		return task, fmt.Errorf("expected TaskFetcher but received nil")
-	}
+func (tf TaskFetcher) FetchById(id int) (tasks.Task, error) {
 	urlPrefix := "https://api.weeek.net/public/v1/tm/tasks/"
 	link := urlPrefix + fmt.Sprint(id)
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, link, nil)
+
+	var task tasks.Task
+
 	if err != nil {
 		log.Printf("can't create a GET request to link: %s", link)
 		return task, fmt.Errorf("can't create a GET request to link: %s", link)
