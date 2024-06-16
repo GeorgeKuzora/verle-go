@@ -127,6 +127,7 @@ func (t *Task) fetchSubTasks(f Fetcher) ([]Task, error) {
 			log.Printf("can't fetch a subtask with id %d from a task with id %d", taskId, t.Id)
 			continue
 		}
+		subTask.Date = t.Date
 		subTasks[i] = subTask
 	}
 	return subTasks, nil
