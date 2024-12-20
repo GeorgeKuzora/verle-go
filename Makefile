@@ -8,10 +8,10 @@ lint: fmt
 vet: lint
 	go vet ./...
 .PHONY:vet
-build: vet
+build:
 	go build -o verle-go cmd/cli/main.go
 .PHONY:build
-build-win: vet
+build-win:
 	GOOS=windows GOARCH=amd64 go build -o verle-go.exe cmd/cli/main.go
 .PHONY:build-win
 run: vet
