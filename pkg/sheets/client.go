@@ -139,7 +139,7 @@ func (tw TaskWriter) cleanRange() error {
 	for i := 0; i < 4; i++ {
 		emptyData = append(emptyData, "")
 	}
-	for i := 0; i < 200; i++ {
+	for i := 0; i < 2000; i++ {
 		updateData = append(updateData, emptyData)
 	}
 	// Update data in the Google Sheets using the Google Sheets API.
